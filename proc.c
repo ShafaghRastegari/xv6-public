@@ -548,13 +548,13 @@ icp()
   struct proc_info pro[ind];
   cprintf("name \t pid \t state \t \n");
   for(p=ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if (p -> state == RUNNING)
-      pro[ind].pid = p->pid;
-      cprintf("%s \t %d \t RUNNING \t \n ", p->name,p->pid);
+    if (p -> state == RUNNING){
+        pro[ind].pid = p->pid;
+        cprintf("%s \t %d \t RUNNING \t \n ", p->name,p->pid);
       }
     if (p -> state == RUNNABLE){
-      pro[ind].memsize = p -> sz;
-      cprintf("%s \t %d \t RUNNABLE \t \n ", p->name,p->pid);
+        pro[ind].memsize = p -> sz;
+        cprintf("%s \t %d \t RUNNABLE \t \n ", p->name,p->pid);
       }
   }
   release(&ptable.lock);
