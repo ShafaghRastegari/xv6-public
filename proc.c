@@ -550,11 +550,24 @@ icp()
   for(p=ptable.proc; p < &ptable.proc[NPROC]; p++){
     if (p -> state == RUNNING){
         pro[ind].pid = p->pid;
+        ind++;
         cprintf("%s \t %d \t RUNNING \t \n ", p->name,p->pid);
       }
     if (p -> state == RUNNABLE){
         pro[ind].memsize = p -> sz;
+        ind++;
         cprintf("%s \t %d \t RUNNABLE \t \n ", p->name,p->pid);
+      }
+  }
+  for(int i=0;i<ind;i++)
+  {
+    for(int j=i+1; j<ind;j++)
+    if(pro[i].memsize < pro[j].memsize){
+      int a = pro[i].memsize;
+      pro[i].memsize = pro[j].memsize;
+      pro[i].pid = pro[j].pid;
+      pro[i].memsize =a;
+      pro[i].pid = a;
       }
   }
   release(&ptable.lock);
