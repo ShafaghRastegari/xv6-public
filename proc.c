@@ -12,6 +12,11 @@ struct {
   struct proc proc[NPROC];
 } ptable;
 
+struct proc_info{
+  int pid;
+  int memsize;
+};
+
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -531,4 +536,25 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+int
+icp()
+{
+  struct proc *p;
+  //enable intrupt on this processor
+  sti();
+  acquire(&ptable.lock);
+  int ind=0;
+  struct proc_info pro[ind];
+  cprintf("name \t pid \t state \t \n");
+  for(p=ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if (p -> state == RUNNING)
+      pro[ind].pid = p->pid;
+      cprintf("%s \t %d \t RUNNING \t \n ", p->name,p->pid);
+    if (p -> state == RUNNABLE)
+      pro[ind].memsize = p -> sz;
+      cprintf("%s \t %d \t RUNNABLE \t \n ", p->name,p->pid);
+  }
+  release(&ptable.lock);
+  return 22; 
 }
