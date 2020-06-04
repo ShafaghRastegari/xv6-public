@@ -546,19 +546,20 @@ icp()
   acquire(&ptable.lock);
   int ind=0;
   struct proc_info pro[ind];
-  cprintf("name \t pid \t state \t \n");
+  cprintf("name \t pid \t state \t \t memsize \t \n");
   for(p=ptable.proc; p < &ptable.proc[NPROC]; p++){
     if (p -> state == RUNNING){
         pro[ind].pid = p->pid;
         ind++;
-        cprintf("%s \t %d \t RUNNING \t \n ", p->name,p->pid);
+        cprintf("%s \t %d \t RUNNING \t %d \t \n ", p->name,p->pid,p->sz);
       }
     if (p -> state == RUNNABLE){
         pro[ind].memsize = p -> sz;
         ind++;
-        cprintf("%s \t %d \t RUNNABLE \t \n ", p->name,p->pid);
+        cprintf("%s \t %d \t RUNNABLE \t %d \t \n ", p->name,p->pid,p->sz);
       }
   }
+  release(&ptable.lock);
   for(int i=0;i<ind;i++)
   {
     for(int j=i+1; j<ind;j++)
@@ -566,10 +567,13 @@ icp()
       int a = pro[i].memsize;
       pro[i].memsize = pro[j].memsize;
       pro[i].pid = pro[j].pid;
-      pro[i].memsize =a;
-      pro[i].pid = a;
+      pro[j].memsize =a;
+      pro[j].pid = a;
       }
   }
-  release(&ptable.lock);
+  for(int k=0; k<ind; k++)
+  {
+    cprintf("%d \n",pro[k].pid);
+  }
   return 22; 
 }
