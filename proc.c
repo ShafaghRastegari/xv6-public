@@ -563,15 +563,15 @@ icp()
   }
   cprintf("%d \n",ind);
   release(&ptable.lock);
-  for(int k=0; k<ind; k++)
-  {
-    cprintf("%d \t %d \t\n",pro[k].pid,pro[k].memsize);
-  }
-  for(int i=0;i<ind;i++)
-  {
-    for(int j=i+1; j<ind;j++){
-      if(pro[i].pid = pro[j].pid & pro[i].memsize = pro[j].memsize)
-      break;
+  // for(int k=0; k<ind; k++)
+  //  {
+  //    cprintf("%d \t %d \t\n",pro[k].pid,pro[k].memsize);
+  //  }
+   for(int i=0;i<ind;i++)
+   {
+     for(int j=i+1; j<ind;j++){
+       //if(pro[i].pid == pro[j].pid & pro[i].memsize == pro[j].memsize)
+      //break;
     if(pro[i].memsize < pro[j].memsize){
       int a = pro[i].memsize;
       int s = pro[i].pid;
@@ -582,5 +582,6 @@ icp()
       }
     }
   }
+    pro[10].pid=3;
   return 22; 
 }
