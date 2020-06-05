@@ -561,7 +561,7 @@ icp()
         cprintf("%s \t %d \t RUNNABLE \t %d \t \n ", p->name,p->pid,p->sz);
       }
   }
-  cprintf("%d \n",ind);
+  //cprintf("%d \n",ind);
   release(&ptable.lock);
   // for(int k=0; k<ind; k++)
   //  {
