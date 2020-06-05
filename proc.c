@@ -553,10 +553,14 @@ int icp()
   struct proc *p;
   //enable intrupt on this processor
   sti();
+  //get system lock
   acquire(&ptable.lock);
   int ind = 0;
+  //make an array of struct that ad it on the top of the code
   struct proc_info pro[ind];
   cprintf("name \t pid \t state \t \t memsize \t \n");
+  //this for is check to which peocess have running or runnable state
+  //and store its pid and memsize of it in an array
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
     if (p->state == RUNNING)
@@ -577,6 +581,7 @@ int icp()
 
   //cprintf("%d \n",ind);
 
+  //this is sort by memsize
   for (int i = 0; i < ind; i++)
   {
     for (int j = i + 1; j < ind; j++)
@@ -593,6 +598,7 @@ int icp()
   }
   cprintf("sort version\n");
   cprintf("pid \t memsize \n");
+  //this for print a sort version
   for (int k = 0; k < ind; k++)
     {
       cprintf("%d \t %d \t\n", pro[k].pid, pro[k].memsize);
