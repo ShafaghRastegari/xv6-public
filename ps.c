@@ -9,10 +9,9 @@ int main(int argc, char const *argv[])
     int x = fork();
     if (x == 0)
     {
-        printf(1, "x=%d\n", x);
-        int *pr;
+        //int *pr;
         int i;
-        pr = malloc(4 * sizeof(*pr));
+        malloc(52428);
         while (1)
         {
             i = 1356 * 23;
@@ -24,11 +23,10 @@ int main(int argc, char const *argv[])
         int y = fork();
         if (y == 0)
         {
-            printf(1, "y=%d\n", y);
-            int *ptr;
+            //int *ptr;
             //int *poi;
             int j;
-            ptr = malloc(17 * sizeof(*ptr));
+            malloc(10485);
             //poi = malloc(27*sizeof(*poi));
             while (1)
             {
@@ -39,10 +37,12 @@ int main(int argc, char const *argv[])
         }
         else
         {
+            printf(1, "x=%d\n", x);
+            printf(1, "y=%d\n", y);
             sleep(1);
             icp();
-            //kill(x);
-            //kill(y);
+            kill(x);
+            kill(y);
             exit();
         }
     }
