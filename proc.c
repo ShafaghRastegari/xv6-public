@@ -120,7 +120,10 @@ found:
   p->context = (struct context *)sp;
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
-
+  p->stime = ticks;         // start time
+  p->etime = 0;             // end time
+  p->rtime = 0;             // run time
+  p->iotime = 0;            // I/O time
   return p;
 }
 
@@ -277,6 +280,7 @@ void exit(void)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
+  curproc->etime = ticks;
   sched();
   panic("zombie exit");
 }
@@ -348,7 +352,7 @@ waitx(int *wtime, int *rtime)
 
         *wtime = p->etime - p->stime - p->rtime - p->iotime;
         *rtime = p->rtime;
-
+        cprintf("%d \n %d",*wtime,*rtime );
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -500,6 +504,7 @@ void sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   p->chan = chan;
   p->state = SLEEPING;
+  p->iotime++;
 
   sched();
 
@@ -605,25 +610,27 @@ int icp()
   int ind = 0;
   //make an array of struct that ad it on the top of the code
   struct proc_info pro[ind];
-  cprintf("name \t pid \t state \t \t memsize \t \n");
+  cprintf("name \t memsize \t stime \t iotime \t rtime \t etime \n");
   //this for is check to which peocess have running or runnable state
   //and store its pid and memsize of it in an array
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
-    if (p->state == RUNNING)
-    {
-      pro[ind].pid = p->pid;
-      pro[ind].memsize = p->sz;
-      cprintf("%s \t %d \t RUNNING \t %d \t \n", p->name, pro[ind].pid,p->sz);
-      ind++;
-    }
-    else if (p->state == RUNNABLE)
-    {
-      pro[ind].pid = p->pid;
-      pro[ind].memsize = p->sz;
-      cprintf("%s \t %d \t RUNNABLE \t %d \t \n", p->name, pro[ind].pid,p->sz);
-      ind++;
-    }
+    if(p->sz >0)
+   cprintf("%s \t %d \t\t %d \t %d \t\t %d \t %d \n", p->name,p->sz,p->stime,p->iotime,p->rtime,p->etime);
+    // if (p->state == RUNNING)
+    // {
+    //   pro[ind].pid = p->pid;
+    //   pro[ind].memsize = p->sz;
+    //   cprintf("%s \t %d \t RUNNING \t %d \t %d \n", p->name, pro[ind].pid,p->sz,p->stime,p->iotime,p->rtime);
+    //   ind++;
+    // }
+    // else if (p->state == RUNNABLE)
+    // {
+    //   pro[ind].pid = p->pid;
+    //   pro[ind].memsize = p->sz;
+    //   cprintf("%s \t %d \t RUNNABLE \t %d \t %d \n", p->name, pro[ind].pid,p->sz,p->stime,p->iotime,p->rtime);
+    //   ind++;
+    // }
   }
 
   //cprintf("%d \n",ind);
