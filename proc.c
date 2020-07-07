@@ -96,6 +96,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 60;
 
   release(&ptable.lock);
 
@@ -661,4 +662,21 @@ int icp()
 
   release(&ptable.lock);
   return 22;
+}
+int set_priority(int pid,int priority)
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  int old_priority=priority;
+  for(p=ptable.proc;p< &ptable.proc[NPROC];p++)
+  {
+    if(p->pid==pid)
+    {
+      old_priority=p->priority;
+      p->priority=priority;
+      break;
+    }
+  }
+  release(&ptable.lock);
+  return old_priority;
 }
