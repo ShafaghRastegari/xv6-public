@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#define NULL 0
 
 struct
 {
@@ -391,13 +392,16 @@ waitx(int *wtime, int *rtime)
 void scheduler(void)
 {
   struct proc *p;
+  struct proc *p1;
   struct cpu *c = mycpu();
   c->proc = 0;
+
 
   for (;;)
   {
     // Enable interrupts on this processor.
     sti();
+    struct proc *hp = NULL;
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -405,7 +409,14 @@ void scheduler(void)
     {
       if (p->state != RUNNABLE)
         continue;
-
+      hp=p;
+      for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
+        if(p1->state != RUNNABLE)
+          continue;
+        if(hp->priority > p1->priority)
+          hp = p1;
+        p=hp;
+        }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -603,6 +614,14 @@ void procdump(void)
 }
 int icp()
 {
+  static char *states[] = {
+  [UNUSED]    "unused",
+  [EMBRYO]    "embryo",
+  [SLEEPING]  "sleep ",
+  [RUNNABLE]  "runble",
+  [RUNNING]   "run   ",
+  [ZOMBIE]    "zombie"
+  };
   struct proc *p;
   //enable intrupt on this processor
   sti();
@@ -611,13 +630,13 @@ int icp()
   int ind = 0;
   //make an array of struct that ad it on the top of the code
   struct proc_info pro[ind];
-  cprintf("name \t memsize \t stime \t iotime \t rtime \t etime \n");
+  cprintf("name \t memsize \t stime \t iotime \t rtime \t etime \t state \t priority \n");
   //this for is check to which peocess have running or runnable state
   //and store its pid and memsize of it in an array
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
     if(p->sz >0)
-   cprintf("%s \t %d \t\t %d \t %d \t\t %d \t %d \n", p->name,p->sz,p->stime,p->iotime,p->rtime,p->etime);
+   cprintf("%s \t %d \t\t %d \t %d \t\t %d \t %d \t %s \t %d \n", p->name,p->sz,p->stime,p->iotime,p->rtime,p->etime,states[p->state],p->priority);
     // if (p->state == RUNNING)
     // {
     //   pro[ind].pid = p->pid;
@@ -678,5 +697,8 @@ int set_priority(int pid,int priority)
     }
   }
   release(&ptable.lock);
+  if(old_priority>priority){
+    yield();
+  }
   return old_priority;
 }

@@ -15,41 +15,48 @@ int main(int argc, char const *argv[])
     {
         waitx(&a,&b);
         //int *pr;
-        int i;
+    
         //reserve n byte
         malloc(52428);
+        int i;
         //do something
-        while (i<1000000)
+        while (i<900000000)
         {
             i++;
         }
+        
         exit();
+        
     }
     else
     {
         //its do similiar that fork 
+        
         int y = fork();
         if (y == 0)
         {
             waitx(&a,&b);
             //int *ptr;
             //int *poi;
-            //int j;
+            int j;
             malloc(10485);
+            
             //poi = malloc(27*sizeof(*poi));
-            // while (1)
-            // {
-            //     j = 234 * 432;
-            //     j = j * 4;
-            // }
-            exit();
+             while (j<900000)
+             {
+                j++;
+             } 
+            exit();     
         }
         else
         {
             printf(1, "x=%d\n", x);
             printf(1, "y=%d\n", y);
-            sleep(10);
+            set_priority(y,40);
+            set_priority(x,70);
+            
             //call our syscall
+            sleep(10);
             icp();
             //kill child to have not zombie process
             kill(x);
